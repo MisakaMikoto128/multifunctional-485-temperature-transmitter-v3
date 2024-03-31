@@ -42,7 +42,7 @@ void CHIP_W5500_Init(void);
 void SPI_WriteByte(uint8_t TxData)
 {
     HAL_StatusTypeDef ret = HAL_OK;
-    ret = HAL_SPI_Transmit(&W5500_SPI_HANDLE, &TxData, 1, 1000);
+    ret = HAL_SPI_Transmit(&W5500_SPI_HANDLE, &TxData, 1, 10);
     if (ret != HAL_OK) {
         ULOG_INFO("%s error\n", __func__);
     }
@@ -53,7 +53,7 @@ uint8_t SPI_ReadByte(void)
     HAL_StatusTypeDef ret = HAL_OK;
     uint8_t value;
 	
-		ret = HAL_SPI_Receive(&W5500_SPI_HANDLE, &value, 1, 1000);
+		ret = HAL_SPI_Receive(&W5500_SPI_HANDLE, &value, 1, 10);
 
     if (ret != HAL_OK) {
 				value = 0;
@@ -163,7 +163,7 @@ void CHIP_W5500_ChipParametersConfiguration()
     /* WIZCHIP SOCKET Buffer initialize */
     if (ctlwizchip(CW_INIT_WIZCHIP, (void *)memsize) == -1) {
         ULOG_INFO("WIZCHIP Initialized fail.\r\n");
-        Error_Handler();
+        // Error_Handler();
     }
 
     w5500_phy_init();

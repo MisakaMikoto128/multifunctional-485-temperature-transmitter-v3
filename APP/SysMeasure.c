@@ -79,6 +79,8 @@ void SysMeasureStart()
 }
 
 #define STAGE_1_CURRENT 70
+#define STAGE_2_CURRENT 33
+#define STAGE_3_CURRENT 33
 
 void SysMeasureInit()
 {
@@ -92,12 +94,6 @@ void SysMeasureInit()
     average_filter_new(&sysmeasure_data.adc4_0Filter, __AVE_FILTER_LEN);
     average_filter_new(&sysmeasure_data.adc5Filter, __AVE_FILTER_LEN);
     average_filter_new(&sysmeasure_data.adc4_1Filter, __AVE_FILTER_LEN);
-
-    // 延时1s等待ADC电压稳定
-    // HDL_G4_CPU_Time_DelayMs(1000);
-    SysMeasureCalibration();
-    SysMeasureStart();
-    asyn_sys_register(SysMeasurePoll);
 
     sysmeasure_data.resistor1 = 0;
     sysmeasure_data.resistor2 = 0;
@@ -115,7 +111,7 @@ void SysMeasureInit()
         g_ref_current_list[i] = 0;
     }
 
-    // 25摄氏度时测量的一组参考值，这里设定一组初始值，然后让计算参考电流值的过程一直进行，就不需要等待了
+    // 29摄氏度时测量的一组参考值，这里设定一组初始值，然后让计算参考电流值的过程一直进行，就不需要等待了
     // 0.877644658 10s wiper 4
     // 0.175052196 10s wiper 5
     // 0.0380995721 10s wiper 33
@@ -130,6 +126,12 @@ void SysMeasureInit()
     g_ref_current_list[85]  = 0.0214072242f;
     g_ref_current_list[90]  = 0.0208791867f;
     g_ref_current_list[127] = 0.0185455307f;
+
+    // 延时1s等待ADC电压稳定
+    HDL_G4_CPU_Time_DelayMs(1000);
+    SysMeasureCalibration();
+    SysMeasureStart();
+    asyn_sys_register(SysMeasurePoll);
 
     // 电流源电阻值初始化
     for (int i = 0; i < MCP4017T_104_NUM; i++) {
@@ -186,9 +188,10 @@ int calculateWiperSetting(float *totalResistor, float *totalResistorLast, float 
         *pIsT1Connected = *pSensor < 2.35f;
 
         if (*pIsT1Connected) {
+            // 算上限，估下限
             if (*totalResistor > 89) {
                 wiper_setting_cal = MCP4017T_104_WIPER_MAX;
-            } else if (*totalResistor < 80 && *totalResistor > 20) {
+            } else if (*totalResistor < 80 && *totalResistor > 12) {
                 wiper_setting_cal = STAGE_1_CURRENT;
             } else if (*totalResistor < 10) {
                 wiper_setting_cal = 5;
@@ -247,7 +250,7 @@ void SysMeasurePoll()
                 break;
             case 2:
                 g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] = sysmeasure_data.ref;
-                g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]  = g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] / RefferenceResistanceValueGetCurrent();
+                g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]  = (g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] / RefferenceResistanceValueGetCurrent() + g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]) / 2;
                 measure_stage                                                  = 3;
                 break;
             case 3:
@@ -264,7 +267,7 @@ void SysMeasurePoll()
                 break;
             case 5:
                 g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] = sysmeasure_data.ref;
-                g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]  = g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] / RefferenceResistanceValueGetCurrent();
+                g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]  = (g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] / RefferenceResistanceValueGetCurrent() + g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]) / 2;
                 measure_stage                                                  = 6;
                 break;
             case 6:
@@ -281,7 +284,7 @@ void SysMeasurePoll()
                 break;
             case 8:
                 g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] = sysmeasure_data.ref;
-                g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]  = g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] / RefferenceResistanceValueGetCurrent();
+                g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]  = (g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] / RefferenceResistanceValueGetCurrent() + g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]) / 2;
                 measure_stage                                                  = 9;
                 break;
 
@@ -299,7 +302,7 @@ void SysMeasurePoll()
                 break;
             case 11:
                 g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] = sysmeasure_data.ref;
-                g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]  = g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] / RefferenceResistanceValueGetCurrent();
+                g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]  = (g_voltage_ref_resistance_map[RefferenceResistanceGetCurrent()] / RefferenceResistanceValueGetCurrent() + g_ref_current_list[g_mcp4017t_104_chip_list[5].wiper_setting]) / 2;
                 measure_stage                                                  = 0;
                 break;
             default:
@@ -323,24 +326,53 @@ void SysMeasurePoll()
                 }
                 break;
             case 2:
+            #define THRESHOLD 0.1f
                 if (adc1_finished) {
-                    calculateWiperSetting(&sysmeasure_data.resistor1, &sysmeasure_data.resistor1_last, &sysmeasure_data.sensor1, &sysinfo.isT1Connected, &sysmeasure_data.resistor1_ntc, &sysinfo.Temp1, 0);
+                    calculateWiperSetting(&sysmeasure_data.resistor1, &sysmeasure_data.resistor1_last, &sysmeasure_data.sensor1, &sysinfo.isT1Connected, &sysmeasure_data.resistor1_ntc, &sysmeasure_data.Temp1, 0);
+                    if (sysinfo.isT1Connected) {
+                        if (fabsf(sysinfo.Temp1 - sysmeasure_data.Temp1) > THRESHOLD) {
+                            sysinfo.Temp1 = sysmeasure_data.Temp1;
+                        }
+                    }
                 }
 
                 if (adc2_finished) {
-                    calculateWiperSetting(&sysmeasure_data.resistor2, &sysmeasure_data.resistor2_last, &sysmeasure_data.sensor2, &sysinfo.isT2Connected, &sysmeasure_data.resistor2_ntc, &sysinfo.Temp2, 1);
+                    calculateWiperSetting(&sysmeasure_data.resistor2, &sysmeasure_data.resistor2_last, &sysmeasure_data.sensor2, &sysinfo.isT2Connected, &sysmeasure_data.resistor2_ntc, &sysmeasure_data.Temp2, 1);
+                    if (sysinfo.isT2Connected) {
+                        if (fabsf(sysinfo.Temp2 - sysmeasure_data.Temp2) > THRESHOLD) {
+                            sysinfo.Temp2 = sysmeasure_data.Temp2;
+                        }
+                    }
                 }
 
                 if (adc3_finished) {
-                    calculateWiperSetting(&sysmeasure_data.resistor3, &sysmeasure_data.resistor3_last, &sysmeasure_data.sensor3, &sysinfo.isT3Connected, &sysmeasure_data.resistor3_ntc, &sysinfo.Temp3, 2);
+                    calculateWiperSetting(&sysmeasure_data.resistor3, &sysmeasure_data.resistor3_last, &sysmeasure_data.sensor3, &sysinfo.isT3Connected, &sysmeasure_data.resistor3_ntc, &sysmeasure_data.Temp3, 2);
+
+                    if (sysinfo.isT3Connected) {
+                        if (fabsf(sysinfo.Temp3 - sysmeasure_data.Temp3) > THRESHOLD) {
+                            sysinfo.Temp3 = sysmeasure_data.Temp3;
+                        }
+                    }
                 }
 
                 if (adc4_finished) {
-                    calculateWiperSetting(&sysmeasure_data.resistor4, &sysmeasure_data.resistor4_last, &sysmeasure_data.sensor4, &sysinfo.isT4Connected, &sysmeasure_data.resistor4_ntc, &sysinfo.Temp4, 3);
+                    calculateWiperSetting(&sysmeasure_data.resistor4, &sysmeasure_data.resistor4_last, &sysmeasure_data.sensor4, &sysinfo.isT4Connected, &sysmeasure_data.resistor4_ntc, &sysmeasure_data.Temp4, 3);
+
+                    if (sysinfo.isT4Connected) {
+                        if (fabsf(sysinfo.Temp4 - sysmeasure_data.Temp4) > THRESHOLD) {
+                            sysinfo.Temp4 = sysmeasure_data.Temp4;
+                        }
+                    }
                 }
 
                 if (adc5_finished) {
-                    calculateWiperSetting(&sysmeasure_data.resistor5, &sysmeasure_data.resistor5_last, &sysmeasure_data.sensor5, &sysinfo.isT5Connected, &sysmeasure_data.resistor5_ntc, &sysinfo.Temp5, 4);
+                    calculateWiperSetting(&sysmeasure_data.resistor5, &sysmeasure_data.resistor5_last, &sysmeasure_data.sensor5, &sysinfo.isT5Connected, &sysmeasure_data.resistor5_ntc, &sysmeasure_data.Temp5, 4);
+
+                    if (sysinfo.isT5Connected) {
+                        if (fabsf(sysinfo.Temp5 - sysmeasure_data.Temp5) > THRESHOLD) {
+                            sysinfo.Temp5 = sysmeasure_data.Temp5;
+                        }
+                    }
                 }
                 break;
             default:

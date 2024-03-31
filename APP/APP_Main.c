@@ -138,7 +138,7 @@ void APP_Main_Poll()
             CHIP_MIZ043WO1RPGA_Printf(30, 6, " D1 NC");
         }
 
-        CHIP_MIZ043WO1RPGA_Printf(36, 25, "%d.%d.%d.%d:%d", gWIZNETINFO.ip[0], gWIZNETINFO.ip[1], gWIZNETINFO.ip[2], gWIZNETINFO.ip[3], 5050);
+        CHIP_MIZ043WO1RPGA_Printf(36, 27, "%d.%d.%d.%d:%d", gWIZNETINFO.ip[0], gWIZNETINFO.ip[1], gWIZNETINFO.ip[2], gWIZNETINFO.ip[3], 5050);
     }
 
     if (period_query_user(&s_tPollTime2, 10)) {
@@ -179,8 +179,8 @@ void APP_Main_Init()
     CHIP_TCA9548A_SelectChannel(0); // 选择通道0
     CHIP_TMP102_Init();
 
-    // APP_Ethernet_Init();
-    // APP_Modbus_Slaver_Init();
+    APP_Ethernet_Init();
+    APP_Modbus_Slaver_Init();
     SysMeasureInit();
     asyn_sys_register(APP_Main_Poll);
 }
