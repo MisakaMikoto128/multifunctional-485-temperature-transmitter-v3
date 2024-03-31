@@ -383,6 +383,101 @@
       </TargetOption>
       <Groups>
         <Group>
+          <GroupName>APP</GroupName>
+          <Files>
+            <File>
+              <FileName>dhcp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Ethernet\Application\dhcp.c</FilePath>
+            </File>
+            <File>
+              <FileName>dns.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Ethernet\Application\dns.c</FilePath>
+            </File>
+            <File>
+              <FileName>APP_Ethernet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\APP_Ethernet.c</FilePath>
+            </File>
+            <File>
+              <FileName>APP_Modbus_Slaver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\APP_Modbus_Slaver.c</FilePath>
+            </File>
+            <File>
+              <FileName>APP_Main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\APP_Main.c</FilePath>
+            </File>
+            <File>
+              <FileName>SysMeasure.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\SysMeasure.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BFL</GroupName>
+          <Files>
+            <File>
+              <FileName>log.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BFL\log.c</FilePath>
+            </File>
+            <File>
+              <FileName>ulog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BFL\ulog\src\ulog.c</FilePath>
+            </File>
+            <File>
+              <FileName>CHIP_MIZ043WO1RPGA.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BFL\CHIP_MIZ043WO1RPGA.c</FilePath>
+            </File>
+            <File>
+              <FileName>asyn_sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BFL\asyn_sys.c</FilePath>
+            </File>
+            <File>
+              <FileName>BFL_LED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BFL\BFL_LED.c</FilePath>
+            </File>
+            <File>
+              <FileName>CHIP_TTL_Screen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BFL\CHIP_TTL_Screen.c</FilePath>
+            </File>
+            <File>
+              <FileName>CHIP_TCA9548A.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BFL\CHIP_TCA9548A.c</FilePath>
+            </File>
+            <File>
+              <FileName>CHIP_MCP4017T_104.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BFL\CHIP_MCP4017T_104.c</FilePath>
+            </File>
+            <File>
+              <FileName>CHIP_TMP102.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BFL\CHIP_TMP102.c</FilePath>
+            </File>
+            <File>
+              <FileName>tmp102.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BFL\tmp102.c</FilePath>
+            </File>
+            <File>
+              <FileName>BFL_Debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BFL\BFL_Debug.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Application/MDK-ARM</GroupName>
           <Files>
             <File>
@@ -912,61 +1007,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>BFL</GroupName>
-          <Files>
-            <File>
-              <FileName>log.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BFL\log.c</FilePath>
-            </File>
-            <File>
-              <FileName>ulog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BFL\ulog\src\ulog.c</FilePath>
-            </File>
-            <File>
-              <FileName>CHIP_MIZ043WO1RPGA.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BFL\CHIP_MIZ043WO1RPGA.c</FilePath>
-            </File>
-            <File>
-              <FileName>asyn_sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BFL\asyn_sys.c</FilePath>
-            </File>
-            <File>
-              <FileName>BFL_LED.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BFL\BFL_LED.c</FilePath>
-            </File>
-            <File>
-              <FileName>CHIP_TTL_Screen.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BFL\CHIP_TTL_Screen.c</FilePath>
-            </File>
-            <File>
-              <FileName>CHIP_TCA9548A.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BFL\CHIP_TCA9548A.c</FilePath>
-            </File>
-            <File>
-              <FileName>CHIP_MCP4017T_104.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BFL\CHIP_MCP4017T_104.c</FilePath>
-            </File>
-            <File>
-              <FileName>CHIP_TMP102.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BFL\CHIP_TMP102.c</FilePath>
-            </File>
-            <File>
-              <FileName>tmp102.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BFL\tmp102.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>freemodbus</GroupName>
           <Files>
             <File>
@@ -1072,41 +1112,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>APP</GroupName>
-          <Files>
-            <File>
-              <FileName>dhcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Ethernet\Application\dhcp.c</FilePath>
-            </File>
-            <File>
-              <FileName>dns.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Ethernet\Application\dns.c</FilePath>
-            </File>
-            <File>
-              <FileName>APP_Ethernet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\APP\APP_Ethernet.c</FilePath>
-            </File>
-            <File>
-              <FileName>APP_Modbus_Slaver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\APP\APP_Modbus_Slaver.c</FilePath>
-            </File>
-            <File>
-              <FileName>APP_Main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\APP\APP_Main.c</FilePath>
-            </File>
-            <File>
-              <FileName>SysMeasure.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\APP\SysMeasure.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Board</GroupName>
           <Files>
             <File>
@@ -1181,6 +1186,11 @@
               <FileName>kalman_filter.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\LIB\kalman_filter.c</FilePath>
+            </File>
+            <File>
+              <FileName>ntc_resistance.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LIB\ntc_resistance.c</FilePath>
             </File>
           </Files>
         </Group>

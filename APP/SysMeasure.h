@@ -22,8 +22,7 @@ extern "C" {
 
 #define ADC_CHANNEL_NUM         1
 #define ADC_SAMPLE_NUM          (4096 * 2)
-#define VREF_VOLT               3.291f
-#define VREF_FACTOR             0.9727f
+#define VREF_VOLT               3.2951f
 
 #define FFT_POINT_NUM           (ADC_CHANNEL_NUM * ADC_SAMPLE_NUM)
 
@@ -35,33 +34,65 @@ extern "C" {
 
 #define ADC_SAMPLE_ONE_GRUP_NUM 400
 
-#define MCP4017T_104_NUM 6
-extern struct MCP4017T_104_Chip_t g_mcp4017t_104_chip_list[MCP4017T_104_NUM];
-extern uint8_t g_mcp4017t_i2c_channel_map[MCP4017T_104_NUM];
+#define MCP4017T_104_NUM        6
+
 struct SysMeasureData_t {
     float sensor1;
-    average_filter_t sensor1Filter;
+    float sensor2;
+    float sensor3;
+    float sensor4;
+    float sensor5;
+    float ref;
+
+    float resistor1; // Unit: kΩ
+    float resistor2; // Unit: kΩ
+    float resistor3; // Unit: kΩ
+    float resistor4; // Unit: kΩ
+    float resistor5; // Unit: kΩ
+
+    float resistor1_ntc; // Unit: kΩ
+    float resistor2_ntc; // Unit: kΩ
+    float resistor3_ntc; // Unit: kΩ
+    float resistor4_ntc; // Unit: kΩ
+    float resistor5_ntc; // Unit: kΩ
+
+    float resistor1_last; // Unit: kΩ
+    float resistor2_last; // Unit: kΩ
+    float resistor3_last; // Unit: kΩ
+    float resistor4_last; // Unit: kΩ
+    float resistor5_last; // Unit: kΩ
+
+    float Temp1; // Unit: ℃
+    float Temp2; // Unit: ℃
+    float Temp3; // Unit: ℃
+    float Temp4; // Unit: ℃
+    float Temp5; // Unit: ℃
+
+    float TempD1; // Unit: ℃
+
+    average_filter_t adc1Filter;
     uint16_t adc1_sample_buf[ADC_SAMPLE_ONE_GRUP_NUM];
     uint32_t sensor1SwitchCurrentMoment; // Unit: ms
-    float sensor2;
-    average_filter_t sensor2Filter;
+
+    average_filter_t adc2Filter;
     uint16_t adc2_sample_buf[ADC_SAMPLE_ONE_GRUP_NUM];
     uint32_t sensor2SwitchCurrentMoment; // Unit: ms
-    float sensor3;
-    average_filter_t sensor3Filter;
+
+    average_filter_t adc3Filter;
     uint16_t adc3_sample_buf[ADC_SAMPLE_ONE_GRUP_NUM];
     uint32_t sensor3SwitchCurrentMoment; // Unit: ms
-    float sensor4;
-    average_filter_t sensor4Filter;
-    uint16_t adc4_sample_buf[ADC_SAMPLE_ONE_GRUP_NUM];
+
+    average_filter_t adc4_0Filter;
+    uint16_t adc4_sample_buf[ADC_SAMPLE_ONE_GRUP_NUM * 2];
     uint32_t sensor4SwitchCurrentMoment; // Unit: ms
-    float sensor5;
-    average_filter_t sensor5Filter;
+
+    average_filter_t adc5Filter;
     uint16_t adc5_sample_buf[ADC_SAMPLE_ONE_GRUP_NUM];
     uint32_t sensor5SwitchCurrentMoment; // Unit: ms
-    float ref;
-    average_filter_t refFilter;
-    uint16_t ref_sample_buf[ADC_SAMPLE_ONE_GRUP_NUM];
+
+    average_filter_t adc4_1Filter;
+    uint16_t adc4_1_sample_buf[ADC_SAMPLE_ONE_GRUP_NUM];
+    uint16_t adc4_0_sample_buf[ADC_SAMPLE_ONE_GRUP_NUM];
     uint32_t refSwitchCurrentMoment; // Unit: ms
 };
 

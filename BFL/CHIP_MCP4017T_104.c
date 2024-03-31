@@ -93,12 +93,13 @@ static int32_t MCP4017T_104_I2C_Read(struct MCP4017T_104_Chip_t *pChip, uint8_t 
 int32_t CHIP_MCP4017T_104_Init(struct MCP4017T_104_Chip_t *pChip)
 {
 #if MCP4017T_104_USE_HD_I2C == 1
-    
+    pChip->pI2c = &hi2c1;
 #else
 		IIC_Init();
 #endif
     // 确保I2C总线已经初始化了
     pChip->wiper_setting = MCP4017T_104_DEFAULT_WIPER;
+    
     return MCP4017T_104_I2C_Write(pChip, pChip->wiper_setting);
 }
 

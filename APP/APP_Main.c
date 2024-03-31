@@ -14,6 +14,7 @@
 #include "HDL_G4_CPU_Time.h"
 #include "APP_Modbus_Slaver.h"
 #include "APP_Ethernet.h"
+#include "BFL_Debug.h"
 
 uint16_t *eMBGetRegHoldingBufBase(size_t *usLen);
 
@@ -63,6 +64,9 @@ static PeriodREC_t s_tPollTime3 = 0;
 #include "CHIP_TCA9548A.h"
 #include "CHIP_TMP102.h"
 #include "tmp102.h"
+
+extern struct MCP4017T_104_Chip_t g_mcp4017t_104_chip_list[MCP4017T_104_NUM];
+extern uint8_t g_mcp4017t_i2c_channel_map[MCP4017T_104_NUM];
 
 #include "socket.h" // Just include one header for WIZCHIP
 extern wiz_NetInfo gWIZNETINFO;
@@ -128,9 +132,9 @@ void APP_Main_Poll()
             CHIP_MIZ043WO1RPGA_Printf(24, 6, " T5 NC");
         }
 
-        if(sysinfo.isD1Connected){
+        if (sysinfo.isD1Connected) {
             CHIP_MIZ043WO1RPGA_Printf(30, 6, "%6.2f", sysinfo.TempD1);
-        }else{
+        } else {
             CHIP_MIZ043WO1RPGA_Printf(30, 6, " D1 NC");
         }
 
@@ -149,10 +153,9 @@ void APP_Main_Poll()
         float tempture = 0;
         if (CHIP_TMP102_GetTemperature(&tempture)) {
             ULOG_INFO("Temperature: %f", tempture);
-            sysinfo.TempD1 = tempture;
+            sysinfo.TempD1        = tempture;
             sysinfo.isD1Connected = true;
-        }else
-        {
+        } else {
             ULOG_ERROR("Temperature read failed");
             sysinfo.isD1Connected = false;
         }
@@ -163,21 +166,21 @@ void APP_Main_Init()
 {
     HDL_G4_CPU_Time_Init();
     ulog_init_user();
-    CHIP_MIZ043WO1RPGA_Init();
     BFL_LED_Init();
-    asyn_sys_register(APP_Main_Poll);
-    APP_Ethernet_Init();
-    APP_Modbus_Slaver_Init();
-    SysMeasureInit();
-
+    BFL_Debug_Init();
+    CHIP_MIZ043WO1RPGA_Init();
     CHIP_TCA9548A_Init();
 
     for (int i = 0; i < MCP4017T_104_NUM; i++) {
         CHIP_TCA9548A_SelectChannel(g_mcp4017t_i2c_channel_map[i]);
-        g_mcp4017t_104_chip_list[i].pI2c = &hi2c1;
         CHIP_MCP4017T_104_Init(&g_mcp4017t_104_chip_list[i]);
     }
 
     CHIP_TCA9548A_SelectChannel(0); // 选择通道0
     CHIP_TMP102_Init();
+
+    // APP_Ethernet_Init();
+    // APP_Modbus_Slaver_Init();
+    SysMeasureInit();
+    asyn_sys_register(APP_Main_Poll);
 }

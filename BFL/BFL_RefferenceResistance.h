@@ -36,7 +36,7 @@ int RefferenceResistanceGetCurrent();
 /**
  * @brief 
  * 
- * @return int -1代表无穷大，其他值代表电阻值
+ * @return int -1代表无穷大，其他值代表电阻值,单位kΩ
  */
 int RefferenceResistanceValueGetCurrent();
 

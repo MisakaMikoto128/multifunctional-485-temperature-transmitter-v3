@@ -10,6 +10,7 @@
 *
 */
 #include "ntc_resistance.h"
+#include <math.h>
 
 /**
  * @brief
