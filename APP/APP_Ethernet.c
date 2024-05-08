@@ -42,7 +42,7 @@ void CHIP_W5500_Init(void);
 void SPI_WriteByte(uint8_t TxData)
 {
     HAL_StatusTypeDef ret = HAL_OK;
-    ret = HAL_SPI_Transmit(&W5500_SPI_HANDLE, &TxData, 1, 10);
+    ret                   = HAL_SPI_Transmit(&W5500_SPI_HANDLE, &TxData, 1, 10);
     if (ret != HAL_OK) {
         ULOG_INFO("%s error\n", __func__);
     }
@@ -52,11 +52,11 @@ uint8_t SPI_ReadByte(void)
 {
     HAL_StatusTypeDef ret = HAL_OK;
     uint8_t value;
-	
-		ret = HAL_SPI_Receive(&W5500_SPI_HANDLE, &value, 1, 10);
+
+    ret = HAL_SPI_Receive(&W5500_SPI_HANDLE, &value, 1, 10);
 
     if (ret != HAL_OK) {
-				value = 0;
+        value = 0;
         ULOG_INFO("%s error\n", __func__);
     }
     return value;
@@ -268,6 +268,7 @@ void W5500_App_Poll()
 }
 
 extern SysInfo_t sysinfo;
+void DestroyApp();
 
 void W5500_UDP_Temp_App_Poll()
 {
@@ -388,8 +389,8 @@ void W5500_UDP_Temp_App_Poll()
                 }
             }
             break;
-        case SOCK_CLOSED:                                  // Socket处于关闭状态
-            socket(SOCK_TEMP_UDPS, Sn_MR_UDP, 5050, 0x00); // 打开Socket0，并配置为UDP模式，打开一个本地端口
+        case SOCK_CLOSED:                                          // Socket处于关闭状态
+            socket(SOCK_TEMP_UDPS, Sn_MR_UDP, sysinfo.PORT, 0x00); // 打开Socket0，并配置为UDP模式，打开一个本地端口
             break;
     }
 }
@@ -411,6 +412,12 @@ static void APP_Ethernet_Poll()
 
 void APP_Ethernet_Init()
 {
+    memcpy(gWIZNETINFO.mac, sysinfo.MAC, sizeof(sysinfo.MAC));
+    memcpy(gWIZNETINFO.ip, sysinfo.IP, sizeof(sysinfo.IP));
+    memcpy(gWIZNETINFO.gw, sysinfo.GW, sizeof(sysinfo.GW));
+    memcpy(gWIZNETINFO.sn, sysinfo.MASK, sizeof(sysinfo.MASK));
+    memcpy(gWIZNETINFO.dns, sysinfo.DNS, sizeof(sysinfo.DNS));
+
     CHIP_W5500_Init();
     asyn_sys_register(APP_Ethernet_Poll);
 }

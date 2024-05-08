@@ -27,6 +27,7 @@
 #include "CHIP_TMP102.h"
 #include "BFL_Debug.h"
 #include "ntc_resistance.h"
+#include "BFL_LED.h"
 
 void SysMeasurePoll();
 void SysMeasureCalibration();
@@ -38,7 +39,7 @@ static bool adc4_finished = false;
 static bool adc5_finished = false;
 
 static bool sysmeasure_finished                = false;
-static struct SysMeasureData_t sysmeasure_data = {0};
+ struct SysMeasureData_t sysmeasure_data = {0};
 // 0: 采集参考电压 1: 采集传感器电压
 static int measure_stage                                = 0;
 static int measure_stage2                               = 0;
@@ -128,7 +129,14 @@ void SysMeasureInit()
     g_ref_current_list[127] = 0.0185455307f;
 
     // 延时1s等待ADC电压稳定
-    HDL_G4_CPU_Time_DelayMs(1000);
+    for(int i = 0; i < 5; i++)
+    {
+        BFL_LED_Toggle(LED1);
+        HDL_G4_CPU_Time_DelayMs(100);
+        BFL_LED_Toggle(LED1);
+        HDL_G4_CPU_Time_DelayMs(100);
+    }
+
     SysMeasureCalibration();
     SysMeasureStart();
     asyn_sys_register(SysMeasurePoll);
@@ -314,7 +322,7 @@ void SysMeasurePoll()
                 // 电流源电阻值初始化
                 for (int i = 0; i < MCP4017T_104_NUM - 1; i++) {
                     CHIP_TCA9548A_SelectChannel(g_mcp4017t_i2c_channel_map[i]);
-                    CHIP_MCP4017T_104_SetWiper(&g_mcp4017t_104_chip_list[i], MCP4017T_104_WIPER_MAX);
+                    CHIP_MCP4017T_104_SetWiper(&g_mcp4017t_104_chip_list[i], STAGE_1_CURRENT);
                 }
 
                 switchToGetRefCurrentModeMoment = HDL_G4_CPU_Time_GetTick(); // ms
@@ -374,6 +382,9 @@ void SysMeasurePoll()
                         }
                     }
                 }
+								
+								// 更新温度到Modbus Slave寄存器
+								SysInfoWriteToRegHoldingBuf(&sysinfo);
                 break;
             default:
                 break;

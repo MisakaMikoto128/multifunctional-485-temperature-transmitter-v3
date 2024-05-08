@@ -23,7 +23,7 @@
 #define LED_PWM_MAX        1000
 
 int16_t g_led_brightness = 0;
-uint8_t g_led_direction = 0;
+uint8_t g_led_direction  = 0;
 
 void BFL_LED_Init()
 {
@@ -80,7 +80,16 @@ void BFL_LED_Toggle(LED_ID_e led_id)
 {
     switch (led_id) {
         case LED1:
+#ifdef LED_PWM_MODE
+            if (g_led_brightness > 0) {
+                g_led_brightness = 0;
+            } else {
+                g_led_brightness = LED_PWM_MAX;
+            }
+            BFL_LED_SetBrightness(LED1, g_led_brightness);
+#else
             LL_GPIO_TogglePin(LED1_Port, LED1_PIN);
+#endif
         default:
             break;
     }

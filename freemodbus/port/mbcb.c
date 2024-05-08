@@ -1,4 +1,5 @@
 #include "mb.h"
+#include "APP_Main.h"
 
 // 输入寄存器起始地址
 #define REG_INPUT_START 0x0000
@@ -7,7 +8,7 @@
 // 保持寄存器起始地址
 #define REG_HOLDING_START 0x0000
 // 保持寄存器数量
-#define REG_HOLDING_NREGS 15
+#define REG_HOLDING_NREGS 32
 
 // 线圈起始地址
 #define REG_COILS_START 0x0000
@@ -126,6 +127,8 @@ eMBRegHoldingCB(UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegist
                     iRegIndex++;
                     usNRegs--;
                 }
+
+                SaveSysInfo();
                 // 小端序
                 //  iRegIndex = iRegIndex + usNRegs - 1;
                 //  while (usNRegs > 0) {

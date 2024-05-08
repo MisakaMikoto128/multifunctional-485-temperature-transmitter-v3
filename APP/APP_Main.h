@@ -47,10 +47,22 @@ typedef struct tagSysInfo_t {
     bool isD3Connected;
     bool isD4Connected;
     bool isD5Connected;
+
+    uint8_t MAC[6];
+    uint8_t IP[4];
+    uint8_t GW[4];
+    uint8_t MASK[4];
+    uint8_t DNS[4];
+    uint16_t PORT;
+    
 } SysInfo_t;
 
 
 void SysInfoWriteToRegHoldingBuf(const SysInfo_t *pSysInfo);
+
+void SaveSysInfo();
+void LoadSysInfoFromFlash(SysInfo_t *pSysInfo);
+void SaveSysInfoToFlash(const SysInfo_t *pSysInfo);
 #ifdef __cplusplus
 }
 #endif
